@@ -6,11 +6,12 @@ import com.example.employeemanagement.entity.Department;
 import com.example.employeemanagement.entity.Employee;
 import com.example.employeemanagement.repository.DepartmentRepository;
 import com.example.employeemanagement.repository.EmployeeRepository;
-import org.springframework.http.HttpStatus;
+import com.example.employeemanagement.exception.BadRequestException;
+import com.example.employeemanagement.exception.ConflictException;
+import com.example.employeemanagement.exception.ResourceNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,13 +36,11 @@ public class EmployeeService {
     }
 
     public EmployeeResponse create(EmployeeRequest request) {
-        if (request.getName() == null || request.getName().isBlank()
-                || request.getEmail() == null || request.getEmail().isBlank()
-                || request.getPassword() == null || request.getPassword().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "name, email and password are required");
+        if (request.getPassword() == null || request.getPassword().isBlank()) {
+            throw new BadRequestException("Password must not be empty");
         }
         if (employeeRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            throw new ConflictException("Email already exists");
         }
 
         Employee employee = new Employee();
@@ -87,7 +86,7 @@ public class EmployeeService {
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             boolean emailChanged = !request.getEmail().equals(employee.getEmail());
             if (emailChanged && employeeRepository.existsByEmail(request.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+                throw new ConflictException("Email already exists");
             }
             employee.setEmail(request.getEmail());
         }
@@ -108,7 +107,7 @@ public class EmployeeService {
 
     private Employee getEmployee(Long id) {
         return employeeRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found: " + id));
+                new ResourceNotFoundException("Employee not found: " + id));
     }
 
     private Department findDepartment(Long departmentId) {
@@ -116,7 +115,7 @@ public class EmployeeService {
             return null;
         }
         return departmentRepository.findById(departmentId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.BAD_REQUEST, "Department not found: " + departmentId));
+                new ResourceNotFoundException("Department not found: " + departmentId));
     }
 
     private EmployeeResponse toResponse(Employee employee) {

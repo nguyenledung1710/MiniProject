@@ -6,9 +6,9 @@ import com.example.employeemanagement.entity.Department;
 import com.example.employeemanagement.repository.DepartmentRepository;
 import com.example.employeemanagement.repository.EmployeeRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
+import com.example.employeemanagement.exception.ConflictException;
+import com.example.employeemanagement.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,8 @@ public class DepartmentService {
     }
 
     public DepartmentResponse create(DepartmentRequest request) {
-        checkName(request);
         if (departmentRepository.existsByName(request.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Department already exists");
+            throw new ConflictException("Department already exists");
         }
         Department department = new Department();
         department.setName(request.getName());
@@ -51,7 +50,6 @@ public class DepartmentService {
     }
 
     public DepartmentResponse update(Long id, DepartmentRequest request) {
-        checkName(request);
         Department department = getDepartment(id);
         department.setName(request.getName());
         return toResponse(departmentRepository.save(department));
@@ -60,20 +58,14 @@ public class DepartmentService {
     public void delete(Long id) {
         Department department = getDepartment(id);
         if (employeeRepository.existsByDepartmentId(id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Department still has employees");
+            throw new ConflictException("Department still has employees");
         }
         departmentRepository.delete(department);
     }
 
     private Department getDepartment(Long id) {
         return departmentRepository.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Department not found: " + id));
-    }
-
-    private void checkName(DepartmentRequest request) {
-        if (request.getName() == null || request.getName().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "name is required");
-        }
+                new ResourceNotFoundException("Department not found: " + id));
     }
 
     private DepartmentResponse toResponse(Department department) {
