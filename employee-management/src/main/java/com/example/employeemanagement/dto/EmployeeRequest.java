@@ -1,9 +1,22 @@
 package com.example.employeemanagement.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class EmployeeRequest {
+
+    @NotBlank(message = "Name must not be empty")
+    @Size(max = 100, message = "Name must be at most 100 characters")
     private String name;
+
+    @NotBlank(message = "Email must not be empty")
+    @Email(message = "Email is not valid")
     private String email;
+
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
+
     private Long departmentId;
 
     public String getName() { return name; }

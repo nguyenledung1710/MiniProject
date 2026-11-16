@@ -3,6 +3,7 @@ package com.example.employeemanagement.controller;
 import com.example.employeemanagement.dto.DepartmentRequest;
 import com.example.employeemanagement.dto.DepartmentResponse;
 import com.example.employeemanagement.service.DepartmentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -31,7 +32,7 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<DepartmentResponse> create(@RequestBody DepartmentRequest request) {
+    public ResponseEntity<DepartmentResponse> create(@Valid @RequestBody DepartmentRequest request) {
         DepartmentResponse created = departmentService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}").buildAndExpand(created.getId()).toUri();
@@ -39,7 +40,7 @@ public class DepartmentController {
     }
 
     @PutMapping("/{id}")
-    public DepartmentResponse update(@PathVariable Long id, @RequestBody DepartmentRequest request) {
+    public DepartmentResponse update(@PathVariable Long id, @Valid @RequestBody DepartmentRequest request) {
         return departmentService.update(id, request);
     }
 
