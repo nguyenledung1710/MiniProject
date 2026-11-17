@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="menu">
+    <a th:href="@{/employees/list}">Employee list</a>
+    <a th:href="@{/employees/add}">Add employee</a>
+    <a th:href="@{/employees/search}">Search</a>
+</nav>
+
+<table th:fragment="employeeTable(employees)">
+    <thead>
+    <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="e : ${employees}">
+        <td th:text="${e.employeeCode}"></td>
+        <td th:text="${e.name}"></td>
+        <td th:text="${e.email}"></td>
+        <td th:text="${e.departmentName}"></td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(employees)}">
+        <td colspan="4">No employees found</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
