@@ -9,6 +9,8 @@ import com.example.employeemanagement.repository.EmployeeRepository;
 import com.example.employeemanagement.exception.BadRequestException;
 import com.example.employeemanagement.exception.ConflictException;
 import com.example.employeemanagement.exception.ResourceNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,8 @@ import java.util.List;
 @Service
 @Transactional
 public class EmployeeService {
+
+    private static final Logger log = LoggerFactory.getLogger(EmployeeService.class);
 
     private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
@@ -36,10 +40,13 @@ public class EmployeeService {
     }
 
     public EmployeeResponse create(EmployeeRequest request) {
+        log.debug("Creating employee with email {}", request.getEmail());
+
         if (request.getPassword() == null || request.getPassword().isBlank()) {
             throw new BadRequestException("Password must not be empty");
         }
         if (employeeRepository.existsByEmail(request.getEmail())) {
+            log.warn("Cannot create employee, email already exists: {}", request.getEmail());
             throw new ConflictException("Email already exists");
         }
 
@@ -51,6 +58,7 @@ public class EmployeeService {
 
         employee = employeeRepository.save(employee);
         employee.setEmployeeCode(utilityService.generateEmployeeCode(employee.getId()));
+        log.info("Created employee id={}, code={}", employee.getId(), employee.getEmployeeCode());
         return toResponse(employee);
     }
 
@@ -86,6 +94,7 @@ public class EmployeeService {
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             boolean emailChanged = !request.getEmail().equals(employee.getEmail());
             if (emailChanged && employeeRepository.existsByEmail(request.getEmail())) {
+                log.warn("Cannot update employee id={}, email already exists: {}", id, request.getEmail());
                 throw new ConflictException("Email already exists");
             }
             employee.setEmail(request.getEmail());
@@ -98,16 +107,20 @@ public class EmployeeService {
         }
 
         employeeRepository.save(employee);
+        log.info("Updated employee id={}", id);
         return toResponse(employee);
     }
 
     public void delete(Long id) {
         employeeRepository.delete(getEmployee(id));
+        log.info("Deleted employee id={}", id);
     }
 
     private Employee getEmployee(Long id) {
-        return employeeRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Employee not found: " + id));
+        return employeeRepository.findById(id).orElseThrow(() -> {
+            log.warn("Employee not found: id={}", id);
+            return new ResourceNotFoundException("Employee not found: " + id);
+        });
     }
 
     private Department findDepartment(Long departmentId) {
