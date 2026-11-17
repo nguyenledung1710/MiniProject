@@ -1,0 +1,9 @@
+body { font-family: Arial, sans-serif; margin: 30px; }
+nav a { margin-right: 15px; }
+table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+th { background: #f0f0f0; }
+label { display: block; margin-top: 12px; }
+input, select { padding: 6px; width: 300px; }
+button { margin-top: 15px; padding: 7px 15px; }
+.error { color: red; font-size: 13px; }

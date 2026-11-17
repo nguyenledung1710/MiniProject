@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Search employees</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<h2>Search employees</h2>
+<form th:action="@{/employees/search}" method="get">
+    <label>Employee name
+        <input type="text" name="name" th:value="${name}">
+    </label>
+    <label>Department name
+        <input type="text" name="department" th:value="${department}">
+    </label>
+    <button type="submit">Search</button>
+</form>
+
+<div th:replace="~{fragments :: employeeTable(${employees})}"></div>
+</body>
+</html>
