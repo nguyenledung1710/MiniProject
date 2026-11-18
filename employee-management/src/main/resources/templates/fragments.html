@@ -6,6 +6,7 @@
     <a th:href="@{/employees/list}">Employee list</a>
     <a th:href="@{/employees/add}" sec:authorize="hasRole('ADMIN')">Add employee</a>
     <a th:href="@{/employees/search}">Search</a>
+    <a th:href="@{/employees/statistics}">Statistics</a>
 </nav>
 
 <table th:fragment="employeeTable(employees)">
