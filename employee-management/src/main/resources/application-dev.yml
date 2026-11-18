@@ -8,6 +8,9 @@ spring:
       ddl-auto: update
     show-sql: true
 
+jwt:
+  secret: dev-only-secret-key-change-me-0123456789abcdef
+
 logging:
   level:
     root: INFO
