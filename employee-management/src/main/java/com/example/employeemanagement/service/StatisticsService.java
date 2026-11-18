@@ -1,6 +1,7 @@
 package com.example.employeemanagement.service;
 
 import com.example.employeemanagement.dto.DepartmentStatistic;
+import com.example.employeemanagement.dto.MonthlyStatistic;
 import com.example.employeemanagement.dto.StatisticsResponse;
 import com.example.employeemanagement.repository.DepartmentRepository;
 import com.example.employeemanagement.repository.EmployeeRepository;
@@ -29,8 +30,10 @@ public class StatisticsService {
         long withoutDepartment = employeeRepository.countEmployeesWithoutDepartment();
         List<DepartmentStatistic> byDepartment = departmentRepository.countEmployeesByDepartment();
 
-        log.info("Statistics: total={}, withoutDepartment={}, departments={}",
-                total, withoutDepartment, byDepartment.size());
-        return new StatisticsResponse(total, withoutDepartment, byDepartment);
+        List<MonthlyStatistic> byMonth = employeeRepository.countNewEmployeesByMonth();
+
+        log.info("Statistics: total={}, withoutDepartment={}, departments={}, months={}",
+                total, withoutDepartment, byDepartment.size(), byMonth.size());
+        return new StatisticsResponse(total, withoutDepartment, byDepartment, byMonth);
     }
 }
