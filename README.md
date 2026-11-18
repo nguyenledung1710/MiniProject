@@ -25,6 +25,14 @@ Danh sách nhân viên (ADMIN, có nút Edit và Delete):
 
 ![Employee list](employee-management/docs/images/web-list-admin.png)
 
+Form thêm nhân viên (ADMIN):
+
+![Add employee](employee-management/docs/images/web-add-form.png)
+
+Tìm kiếm nhân viên theo tên hoặc phòng ban:
+
+![Search](employee-management/docs/images/web-search.png)
+
 Thống kê theo phòng ban và xu hướng theo tháng:
 
 ![Statistics](employee-management/docs/images/web-statistics-trend.png)
