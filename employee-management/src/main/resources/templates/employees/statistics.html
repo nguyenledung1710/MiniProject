@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistics</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<h2>Employee statistics</h2>
+
+<div class="cards">
+    <div class="card">
+        <div class="number" th:text="${stats.totalEmployees}">0</div>
+        <div>Total employees</div>
+    </div>
+    <div class="card">
+        <div class="number" th:text="${stats.byDepartment.size()}">0</div>
+        <div>Departments</div>
+    </div>
+    <div class="card">
+        <div class="number" th:text="${stats.employeesWithoutDepartment}">0</div>
+        <div>Without department</div>
+    </div>
+</div>
+
+<h3>Employees by department</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Department</th>
+        <th>Employees</th>
+        <th>Share</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="d : ${stats.byDepartment}">
+        <td th:text="${d.departmentName}"></td>
+        <td th:text="${d.employeeCount}"></td>
+        <td>
+            <div class="bar" th:style="'width:' + (${stats.totalEmployees} == 0 ? 0 : ${d.employeeCount} * 100 / ${stats.totalEmployees}) + '%'"></div>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(stats.byDepartment)}">
+        <td colspan="3">No departments yet</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

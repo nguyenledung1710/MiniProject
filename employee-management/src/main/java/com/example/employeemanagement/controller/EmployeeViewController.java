@@ -4,6 +4,7 @@ import com.example.employeemanagement.dto.EmployeeRequest;
 import com.example.employeemanagement.exception.ConflictException;
 import com.example.employeemanagement.service.DepartmentService;
 import com.example.employeemanagement.service.EmployeeService;
+import com.example.employeemanagement.service.StatisticsService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,10 +21,14 @@ public class EmployeeViewController {
 
     private final EmployeeService employeeService;
     private final DepartmentService departmentService;
+    private final StatisticsService statisticsService;
 
-    public EmployeeViewController(EmployeeService employeeService, DepartmentService departmentService) {
+    public EmployeeViewController(EmployeeService employeeService,
+                                  DepartmentService departmentService,
+                                  StatisticsService statisticsService) {
         this.employeeService = employeeService;
         this.departmentService = departmentService;
+        this.statisticsService = statisticsService;
     }
 
     @GetMapping("/list")
@@ -68,5 +73,11 @@ public class EmployeeViewController {
         model.addAttribute("name", name);
         model.addAttribute("department", department);
         return "employees/search";
+    }
+
+    @GetMapping("/statistics")
+    public String statistics(Model model) {
+        model.addAttribute("stats", statisticsService.getStatistics());
+        return "employees/statistics";
     }
 }

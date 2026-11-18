@@ -104,3 +104,43 @@ ADMIN sees the "Add employee" link and the form:
 ![ADMIN add form](docs/images/security-admin-add.png)
 
 Note: since Module 9 the actuator endpoints `/actuator/metrics` and `/actuator/info` require the ADMIN role (`/actuator/health` stays public). The Module 8 screenshots above were taken before security was added.
+
+## Module 10: Reporting & Analytics
+
+### Statistics API
+
+`GET /api/statistics` (roles USER and ADMIN) returns the total number of employees, the number of employees without a department, and the number of employees in each department:
+
+```json
+{
+  "totalEmployees": 14,
+  "employeesWithoutDepartment": 0,
+  "byDepartment": [
+    { "departmentName": "IT", "employeeCount": 5 },
+    { "departmentName": "Kinh doanh", "employeeCount": 4 },
+    { "departmentName": "HR", "employeeCount": 2 },
+    { "departmentName": "Ke toan", "employeeCount": 2 },
+    { "departmentName": "Marketing", "employeeCount": 1 }
+  ]
+}
+```
+
+The numbers are calculated with `@Query` methods in the repositories (`COUNT` + `LEFT JOIN` + `GROUP BY`), so departments without employees are also listed with 0.
+
+![Statistics API](docs/images/statistics-api.png)
+
+### Statistics page
+
+`/employees/statistics` shows the same data with Thymeleaf: summary cards and a table with a bar for each department.
+
+![Statistics page](docs/images/statistics-web.png)
+
+The screenshot above was taken as ADMIN. The page is also available to the USER role (the "Add employee" link is hidden):
+
+![Statistics page as USER](docs/images/statistics-user.png)
+
+### Log and generated SQL
+
+![Statistics log](docs/images/statistics-log.png)
+
+The screenshots were taken with the sample data in the database (14 employees in 5 departments), created through the API.
