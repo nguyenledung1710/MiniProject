@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 
 <nav th:fragment="menu">
     <a th:href="@{/employees/list}">Employee list</a>
-    <a th:href="@{/employees/add}">Add employee</a>
+    <a th:href="@{/employees/add}" sec:authorize="hasRole('ADMIN')">Add employee</a>
     <a th:href="@{/employees/search}">Search</a>
 </nav>
 
