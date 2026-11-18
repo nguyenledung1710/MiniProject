@@ -7,6 +7,15 @@
     <a th:href="@{/employees/add}" sec:authorize="hasRole('ADMIN')">Add employee</a>
     <a th:href="@{/employees/search}">Search</a>
     <a th:href="@{/employees/statistics}">Statistics</a>
+
+    <span class="user-box" sec:authorize="isAuthenticated()">
+        <b sec:authentication="name">user</b>
+        <span sec:authorize="hasRole('ADMIN')">(ADMIN)</span>
+        <span sec:authorize="!hasRole('ADMIN')">(USER)</span>
+        <form th:action="@{/logout}" method="post" class="inline">
+            <button type="submit">Logout</button>
+        </form>
+    </span>
 </nav>
 
 <table th:fragment="employeeTable(employees)">
@@ -16,6 +25,7 @@
         <th>Name</th>
         <th>Email</th>
         <th>Department</th>
+        <th sec:authorize="hasRole('ADMIN')">Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -24,9 +34,16 @@
         <td th:text="${e.name}"></td>
         <td th:text="${e.email}"></td>
         <td th:text="${e.departmentName}"></td>
+        <td sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/employees/edit/{id}(id=${e.id})}">Edit</a>
+            <form th:action="@{/employees/delete/{id}(id=${e.id})}" method="post" class="inline"
+                  onsubmit="return confirm('Delete this employee?')">
+                <button type="submit" class="danger">Delete</button>
+            </form>
+        </td>
     </tr>
     <tr th:if="${#lists.isEmpty(employees)}">
-        <td colspan="4">No employees found</td>
+        <td colspan="5">No employees found</td>
     </tr>
     </tbody>
 </table>

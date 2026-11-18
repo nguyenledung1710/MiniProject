@@ -47,5 +47,28 @@
     </tr>
     </tbody>
 </table>
+
+<h3>Trend: new employees per month</h3>
+<table>
+    <thead>
+    <tr>
+        <th>Month</th>
+        <th>New employees</th>
+        <th>Share</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="m : ${stats.newEmployeesByMonth}">
+        <td th:text="${m.month}"></td>
+        <td th:text="${m.employeeCount}"></td>
+        <td>
+            <div class="bar" th:style="'width:' + (${stats.totalEmployees} == 0 ? 0 : ${m.employeeCount} * 100 / ${stats.totalEmployees}) + '%'"></div>
+        </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(stats.newEmployeesByMonth)}">
+        <td colspan="3">No data yet</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>

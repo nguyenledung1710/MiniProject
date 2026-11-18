@@ -9,6 +9,7 @@
 <div th:replace="~{fragments :: menu}"></div>
 
 <h2>Employee list</h2>
+<p class="message" th:if="${message}" th:text="${message}"></p>
 <div th:replace="~{fragments :: employeeTable(${employees})}"></div>
 </body>
 </html>

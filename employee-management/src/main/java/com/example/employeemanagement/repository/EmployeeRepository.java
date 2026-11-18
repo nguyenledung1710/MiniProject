@@ -1,5 +1,6 @@
 package com.example.employeemanagement.repository;
 
+import com.example.employeemanagement.dto.MonthlyStatistic;
 import com.example.employeemanagement.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -22,4 +23,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     long countEmployeesWithoutDepartment();
 
     boolean existsByDepartmentId(Long departmentId);
+
+    @Query("SELECT new com.example.employeemanagement.dto.MonthlyStatistic("
+            + "YEAR(e.createdAt), MONTH(e.createdAt), COUNT(e)) "
+            + "FROM Employee e WHERE e.createdAt IS NOT NULL "
+            + "GROUP BY YEAR(e.createdAt), MONTH(e.createdAt) "
+            + "ORDER BY YEAR(e.createdAt), MONTH(e.createdAt)")
+    List<MonthlyStatistic> countNewEmployeesByMonth();
 }

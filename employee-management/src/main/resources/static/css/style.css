@@ -11,3 +11,9 @@ button { margin-top: 15px; padding: 7px 15px; }
 .card { border: 1px solid #ccc; padding: 15px 25px; text-align: center; min-width: 140px; }
 .number { font-size: 32px; font-weight: bold; }
 .bar { background: #4a90d9; height: 16px; min-width: 2px; }
+nav { margin-bottom: 10px; }
+.user-box { float: right; }
+form.inline { display: inline; }
+form.inline button { margin-top: 0; padding: 2px 8px; }
+button.danger { color: #b00020; }
+.message { background: #e6f4ea; border: 1px solid #9ad3a8; padding: 8px 12px; }

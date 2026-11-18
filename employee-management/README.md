@@ -27,7 +27,10 @@ Anyone can register (`POST /api/auth/register`), the new account always gets the
 
 Two ways to authenticate:
 - **JWT** for the API: send `Authorization: Bearer <token>` (token valid for 1 hour).
-- **Basic Authentication** for the web pages: the browser shows a login popup.
+- **Login form** for the web pages (`/login`, session based, with `/register` and Logout).
+- **Basic Authentication** is also accepted (for example `curl -u admin:admin123 ...`).
+
+CSRF protection is on for the web forms (Thymeleaf adds the token automatically) and ignored for `/api/**`, which uses JWT.
 
 Status codes: `401` not logged in or wrong password, `403` logged in but not allowed, `409` username already exists.
 
@@ -45,7 +48,15 @@ Status codes: `401` not logged in or wrong password, `403` logged in but not all
 
 ## Web pages
 
-`/employees/list`, `/employees/add`, `/employees/search`
+| Page | Who | Description |
+|---|---|---|
+| `/login`, `/register` | everyone | Log in and create a `USER` account |
+| `/employees/list` | USER, ADMIN | List of employees |
+| `/employees/search` | USER, ADMIN | Search by employee name or department name |
+| `/employees/statistics` | USER, ADMIN | Statistics by department and by month |
+| `/employees/add` | ADMIN | Add an employee |
+| `/employees/edit/{id}` | ADMIN | Edit an employee (empty password keeps the old one) |
+| `/employees/delete/{id}` | ADMIN | Delete an employee (button with confirmation) |
 
 ## Module 8: Actuator, Scheduling, Caching
 
@@ -91,6 +102,8 @@ Register, wrong password, `401` without token, `403` when a USER tries to create
 
 ### Web pages (Basic Authentication)
 
+These three screenshots were taken before the login form was added; the current login form is shown in the last section.
+
 USER `demo_user` sees the list, and the "Add employee" link is hidden:
 
 ![USER list](docs/images/security-user-list.png)
@@ -121,9 +134,19 @@ Note: since Module 9 the actuator endpoints `/actuator/metrics` and `/actuator/i
     { "departmentName": "HR", "employeeCount": 2 },
     { "departmentName": "Ke toan", "employeeCount": 2 },
     { "departmentName": "Marketing", "employeeCount": 1 }
+  ],
+  "newEmployeesByMonth": [
+    { "month": "2026-06", "employeeCount": 3 },
+    { "month": "2026-07", "employeeCount": 3 },
+    { "month": "2026-08", "employeeCount": 2 },
+    { "month": "2026-09", "employeeCount": 2 },
+    { "month": "2026-10", "employeeCount": 2 },
+    { "month": "2026-11", "employeeCount": 2 }
   ]
 }
 ```
+
+`newEmployeesByMonth` is the trend: the number of employees created in each month (from the `created_at` column). The API screenshot below was taken before this field was added.
 
 The numbers are calculated with `@Query` methods in the repositories (`COUNT` + `LEFT JOIN` + `GROUP BY`), so departments without employees are also listed with 0.
 
@@ -144,3 +167,51 @@ The screenshot above was taken as ADMIN. The page is also available to the USER 
 ![Statistics log](docs/images/statistics-log.png)
 
 The screenshots were taken with the sample data in the database (14 employees in 5 departments), created through the API.
+
+## Completing the roadmap: web UI and statistics trend
+
+Added after Module 10 so the project covers all the main features of the roadmap.
+
+### Login and register pages
+
+Registration validates the input, a new account gets the role `USER`:
+
+![Login](docs/images/web-login.png)
+
+![Register with validation errors](docs/images/web-register-errors.png)
+
+### Employee list for ADMIN (with Edit and Delete)
+
+The name and role of the logged in user and the Logout button are in the menu:
+
+![List as ADMIN](docs/images/web-list-admin.png)
+
+### Add, edit and delete from the web (ADMIN)
+
+Add, with the success message:
+
+![Add employee](docs/images/web-add-success.png)
+
+Edit form (filled with the current data, empty password keeps the old one):
+
+![Edit employee](docs/images/web-edit.png)
+
+![Update success](docs/images/web-update-success.png)
+
+Delete (asks for confirmation first):
+
+![Delete success](docs/images/web-delete-success.png)
+
+### USER view
+
+USER sees the list without the "Add employee" link and without the Actions column:
+
+![List as USER](docs/images/web-list-user.png)
+
+### Statistics with the trend
+
+By department, total, and new employees per month:
+
+![Statistics trend](docs/images/web-statistics-trend.png)
+
+All screenshots in this section were taken from a real browser session (Chrome) against the running application. The employee added, edited and deleted in the screenshots was a temporary one, the database was left with the 14 sample employees. The creation dates of the sample employees were spread over the last 6 months so the trend has data.
