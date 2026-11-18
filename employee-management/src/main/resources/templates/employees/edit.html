@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit employee</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="~{fragments :: menu}"></div>
+
+<h2>Edit employee <span th:text="${employeeCode}"></span></h2>
+<form th:action="@{/employees/edit/{id}(id=${employeeId})}" th:object="${employee}" method="post">
+    <label>Name
+        <input type="text" th:field="*{name}">
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+
+    <label>Email
+        <input type="text" th:field="*{email}">
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+
+    <label>New password (leave empty to keep the current one)
+        <input type="password" th:field="*{password}">
+    </label>
+    <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+    <label>Department
+        <select th:field="*{departmentId}">
+            <option value="">-- No department --</option>
+            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"></option>
+        </select>
+    </label>
+
+    <button type="submit">Save</button>
+    <a th:href="@{/employees/list}">Cancel</a>
+</form>
+</body>
+</html>
